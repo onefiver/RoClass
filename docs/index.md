@@ -4,8 +4,8 @@ Welcome to the official documentation for **RoClass**, a lightweight OOP library
 ## Modules
 - [Class](class.md)
 - [Object](object.md)
-- [Events](event.md)
-- [Mixins](mixin.md)
+- [Events](events.md)
+- [Mixins](mixins.md)
 - [Property](property.md)
 - [Registry](registry.md)
 - [Helpers](helpers.md)
