@@ -1,5 +1,5 @@
 # Class
-**Class** is the core module of RoClass responsible for creating and managing classes in Roblox (Luau).  
+**Class** is the core module of RoClass responsible for creating and managing classes in Roblox.  
 It provides a builder pattern to define constructors, methods, properties, static members, and inheritance.
 
 ---
