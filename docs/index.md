@@ -2,11 +2,11 @@
 Welcome to the official documentation for **RoClass**, a lightweight OOP library for Roblox.
 
 ## Modules
-- [Class](classes.md)
+- [Class](class.md)
 - [Object](object.md)
 - [Events](event.md)
 - [Mixins](mixin.md)
-- [Property](registry.md)
+- [Property](property.md)
 - [Registry](registry.md)
 - [Helpers](helpers.md)
 
