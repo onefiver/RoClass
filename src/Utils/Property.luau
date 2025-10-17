@@ -1,48 +1,50 @@
 --!strict
-export type RegistryTable = {
-	classes: { [string]: any },
-	instances: { [string]: {any} },
+
+export type PropertyDefinition = {
+	value: any,
+	get: ((self: any, value: any) -> any)?,
+	set: ((self: any, value: any) -> any)?,
 }
 
-local Registry = {}
-Registry.__index = Registry
+export type PropertyTable = { [string]: PropertyDefinition }
 
-Registry._classes = {} :: { [string]: any }
-Registry._instances = {} :: { [string]: {any} }
+local Property = {}
+Property.__index = Property
 
-function Registry.RegisterClass(class)
-	local name = class._className or class.Name or tostring(class)
-	Registry._classes[name] = class
-	Registry._instances[name] = Registry._instances[name] or {}
-end
+function Property.add(self: any, name: string, definition: PropertyDefinition)
+	self._properties = self._properties or {}
+	self._properties[name] = definition
 
-function Registry.RegisterInstance(instance)
-	local className = instance._className or instance.ClassName or tostring(instance)
-	if not Registry._instances[className] then
-		Registry._instances[className] = {}
-	end
-	table.insert(Registry._instances[className], instance)
-end
+	rawset(self, name, definition.value)
 
-function Registry.DeregisterInstance(instance)
-	local className = instance._className or instance.ClassName or tostring(instance)
-	local list = Registry._instances[className]
-	if list then
-		for i, v in ipairs(list) do
-			if v == instance then
-				table.remove(list, i)
-				break
-			end
+	local mt: { __index: any?, __newindex: any? } = getmetatable(self) or {}
+	local __index = mt.__index
+	local __newindex = mt.__newindex
+
+	mt.__index = function(obj, key)
+		if self._properties and self._properties[key] and self._properties[key].get then
+			return self._properties[key].get(obj, rawget(obj, key))
+		elseif rawget(obj, key) ~= nil then
+			return rawget(obj, key)
+		elseif __index then
+			return __index(obj, key)
 		end
 	end
+
+	mt.__newindex = function(obj, key, value)
+		if self._properties and self._properties[key] then
+			local def = self._properties[key]
+			if def.set then
+				def.set(obj, value)
+			else
+				rawset(obj, key, value)
+			end
+		else
+			rawset(obj, key, value)
+		end
+	end
+
+	setmetatable(self, mt)
 end
 
-function Registry.GetInstances(className)
-	return Registry._instances[className] or {}
-end
-
-function Registry.GetClass(className)
-	return Registry._classes[className]
-end
-
-return Registry
+return Property
